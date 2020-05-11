@@ -1,21 +1,18 @@
-from flask import (Flask, make_response, redirect, render_template, request,
-                   session)
-from flask_bootstrap import Bootstrap
-from flask_wtf import FlaskForm
-from wtforms.fields import PasswordField, StringField, SubmitField
-from wtforms.validators import DataRequired
+from flask import (make_response, redirect, render_template, request,
+                   session, url_for, flash)
+import unittest
+from app import create_app
+from app.forms import LoginForm
 
-app = Flask(__name__)
-bootstrap = Bootstrap(app)
-
-app.config['SECRET_KEY'] = 'SUPER SECRETO'
+app = create_app()
 
 todos = ['Comprar café', 'Enviar solicitud de compra', 'Entregar video a productor']
 
-class LoginForm(FlaskForm):
-    username = StringField('Nombre de usuario', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Enviar')
+
+@app.cli.command()
+def test():
+    tests = unittest.TestLoader().discover('tests')
+    unittest.TextTestRunner().run(tests)
 
 
 @app.errorhandler(404)
@@ -38,14 +35,15 @@ def index():
     return response
 
 
-@app.route('/hello')
+@app.route('/hello', methods=['GET'])
 def hello():
     user_ip = session.get('user_ip')
-    login_form = LoginForm()
+    username = session.get('username')
     context = {
         'user_ip': user_ip,
         'todos': todos,
-        'login_form': login_form,
+        #'login_form': login_form,
+        'username': username,
     }
 
     return render_template('hello.html', **context)
