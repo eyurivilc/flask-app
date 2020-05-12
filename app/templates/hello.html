@@ -8,23 +8,25 @@
 {% endblock %}
 
 {% block content %}
+    {% if username %}
+        <h1>Bienvenido, {{ username | capitalize }}</h1>
+    {% endif %}
+
     {% if user_ip  %}
-        <h1>Hello world from Flask, y tu IP es: {{ user_ip }}</h1>
+        <h3>Hello world from Flask, y tu IP es: {{ user_ip }}</h3>
     {% else %}
         <a href="{{ url_for('index') }}">Ir a inicio</a>
     {% endif %}
 
     <div class="container">
-        <!-- <form action="{{ url_for('hello') }}" method="POST">
-            {{ login_form.username }}
-            {{ login_form.username.label }}
-        </form> -->
-        {{ wtf.quick_form(login_form) }}
+        <h2>Crea una nueva tarea</h2>
+
+	{{ wtf.quick_form(todo_form) }}
     </div>
 
-    <ul>
+    <ul class="list_group">
         {% for todo in todos %}
-            {{ macros.render_todo(todo) }}
+            {{ macros.render_todo(todo, delete_form, update_form) }}
         {% endfor %}
     </ul>
 {% endblock %}
